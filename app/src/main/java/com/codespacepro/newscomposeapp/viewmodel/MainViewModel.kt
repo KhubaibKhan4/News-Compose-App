@@ -9,15 +9,27 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+
+class MainViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
+
     val myResponse: MutableLiveData<Response<News>> = MutableLiveData()
 
-    fun getNews() {
+
+    fun getNews(
+        apiKey: String,
+        query: String,
+        country: String,
+        category: String
+    ) {
         viewModelScope.launch {
-            val response = repository.getNews("pub_238458c1ba1e35414e6402b4c551dc42d5af7",
-                query = "developer",
-                country = "us",
-                category = "science")
+            val response = repository.getNews(
+                apiKey,
+                query,
+                country,
+                category
+            )
             myResponse.value = response
         }
     }

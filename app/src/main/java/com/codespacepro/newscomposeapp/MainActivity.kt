@@ -1,7 +1,5 @@
 package com.codespacepro.newscomposeapp
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -49,6 +47,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
+import com.codespacepro.newscomposeapp.navigation.screen.MainScreen
 import com.codespacepro.newscomposeapp.repository.Repository
 import com.codespacepro.newscomposeapp.ui.theme.NewsComposeAppTheme
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
@@ -84,12 +83,14 @@ class MainActivity : ComponentActivity() {
                 var error by remember {
                     mutableStateOf(false)
                 }
-                val isInternetAvailable by remember {
-                    mutableStateOf(checkInternetConnectivity())
-                }
 
                 val context = LocalContext.current
-                mainViewModel.getNews()
+                mainViewModel.getNews(
+                    "pub_238458c1ba1e35414e6402b4c551dc42d5af7",
+                    query = "developer",
+                    country = "us",
+                    category = "science"
+                )
 
                 mainViewModel.myResponse.observe(this, Observer { response ->
                     if (response.isSuccessful) {
@@ -110,53 +111,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (isInternetAvailable) {
-                        if (isLoading) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        } else {
+
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
 //                            LazyHorizontalGrid(rows = GridCells.Fixed(1)) {
 //                                items(resultState) {
 //                                    it?.let { it1 -> NewsItem(result = it1) }
 //                                }
 //                            }
-                            LazyColumn {
-                                items(resultState) { result ->
-                                    result?.let { NewsItem(result = it) }
-                                }
+                        LazyColumn {
+                            items(resultState) { result ->
+                                result?.let { NewsItem(result = it) }
                             }
-
                         }
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column {
 
-                                CircularProgressIndicator()
-                                Text(text = "Error while Fetching....")
-                            }
-
-                        }
                     }
 
 
-                    //MainScreen()
+
+                    MainScreen()
                 }
             }
         }
-    }
-
-    private fun checkInternetConnectivity(): Boolean {
-        val connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo = connectivityManager.activeNetworkInfo
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }
 

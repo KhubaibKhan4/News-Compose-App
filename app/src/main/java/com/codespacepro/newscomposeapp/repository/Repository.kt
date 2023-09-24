@@ -5,7 +5,9 @@ import com.codespacepro.newscomposeapp.network.retrofit.RetrofitInstance
 import retrofit2.Response
 import javax.inject.Inject
 
-class Repository @Inject constructor(){
+class Repository @Inject constructor() {
+
+
 
     suspend fun getNews(
         apiKey: String,
@@ -13,7 +15,7 @@ class Repository @Inject constructor(){
         country: String,
         category: String
     ): Response<News> {
-        return RetrofitInstance.api.getNews (apiKey, query, country, category)
+        return RetrofitInstance.api.getNews(apiKey, query, country, category)
     }
 
 }

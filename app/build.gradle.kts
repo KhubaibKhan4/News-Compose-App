@@ -20,6 +20,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        compileSdkPreview = "UpsideDownCake"
     }
 
     buildTypes {
@@ -70,7 +71,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
+    implementation ("androidx.navigation:navigation-compose:2.7.3")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
