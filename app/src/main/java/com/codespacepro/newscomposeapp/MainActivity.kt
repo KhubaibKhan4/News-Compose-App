@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.codespacepro.newscomposeapp.navigation.screen.MainScreen
+import com.codespacepro.newscomposeapp.navigation.component.MainScreen
 import com.codespacepro.newscomposeapp.repository.Repository
 import com.codespacepro.newscomposeapp.ui.theme.NewsComposeAppTheme
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel

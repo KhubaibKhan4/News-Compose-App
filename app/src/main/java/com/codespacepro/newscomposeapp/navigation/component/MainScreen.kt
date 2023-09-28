@@ -1,4 +1,4 @@
-package com.codespacepro.newscomposeapp.navigation.screen
+package com.codespacepro.newscomposeapp.navigation.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image

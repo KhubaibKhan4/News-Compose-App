@@ -1,5 +1,7 @@
-package com.codespacepro.newscomposeapp.navigation.screen
+package com.codespacepro.newscomposeapp.navigation.screen.home
 
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,15 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.codespacepro.newscomposeapp.R
 import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
+import com.codespacepro.newscomposeapp.navigation.graph.BottomNavScreen
 import com.codespacepro.newscomposeapp.repository.Repository
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
 
 @Composable
-fun TopNews() {
+fun TopNews(navController: NavHostController) {
 
     val mainViewModel: MainViewModel = MainViewModel(Repository())
 
@@ -56,7 +60,7 @@ fun TopNews() {
 
 
     mainViewModel.getNews(
-        apiKey = "pub_238458c1ba1e35414e6402b4c551dc42d5af7",
+        apiKey = "pub_30263679f0f57b115e1e23fe1539f3b49f549",
         query = "developer",
         country = "us",
         category = "world"
@@ -81,9 +85,9 @@ fun TopNews() {
                 .padding(start = 8.dp, top = 8.dp)
         ) {
             data?.let {
-                items(it.results) { news ->
+                items(it.results) { result ->
 
-                    TopNewsCard(news)
+                    TopNewsCard(result, navController)
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }
@@ -93,17 +97,29 @@ fun TopNews() {
 
 
 @Composable
-fun TopNewsCard(news: Result) {
+fun TopNewsCard(result: Result, navController: NavHostController) {
+
     Card(
         modifier = Modifier
             .width(345.dp)
-            .height(240.dp),
+            .height(240.dp)
+            .clickable {
+                navController.navigate(
+                    BottomNavScreen.Detail.passData(
+                        title = Uri.encode(result.title),
+                        content = Uri.encode(result?.content),
+                        pubDate = Uri.encode(result.pubDate),
+                        creator = listOf(result.creator.toString()),
+                        imageUrl = Uri.encode(result.image_url),
+                    )
+                )
+            },
         colors = CardDefaults.cardColors()
     ) {
         Box {
 
             AsyncImage(
-                model = news.image_url,
+                model = result.image_url,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(),
@@ -113,7 +129,7 @@ fun TopNewsCard(news: Result) {
 
 
             Text(
-                text = news.title,
+                text = result.title,
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 20.8.sp,
@@ -157,7 +173,7 @@ fun LatestNewsText() {
             text = "See All",
             style = TextStyle(
                 fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.nunitto)),
+                fontFamily = FontFamily(Font(R.font.nunito)),
                 fontWeight = FontWeight(600),
                 color = Color(0xFF0080FF),
             )

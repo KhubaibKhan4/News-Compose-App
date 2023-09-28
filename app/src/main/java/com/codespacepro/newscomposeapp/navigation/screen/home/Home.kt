@@ -1,5 +1,6 @@
-package com.codespacepro.newscomposeapp.navigation.screen
+package com.codespacepro.newscomposeapp.navigation.screen.home
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -20,30 +21,28 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.sharp.Notifications
-import androidx.compose.material.icons.sharp.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +56,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,6 +70,7 @@ import coil.request.ImageRequest
 import com.codespacepro.newscomposeapp.R
 import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
+import com.codespacepro.newscomposeapp.navigation.graph.BottomNavScreen
 import com.codespacepro.newscomposeapp.repository.Repository
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +89,9 @@ fun HomeScreen(navController: NavHostController) {
     var searchText by remember {
         mutableStateOf("")
     }
+    var isActive by rememberSaveable {
+        mutableStateOf(false)
+    }
     var isLoading by remember {
         mutableStateOf(true)
     }
@@ -104,9 +104,10 @@ fun HomeScreen(navController: NavHostController) {
 
     val owner: LifecycleOwner = LocalLifecycleOwner.current
 
-
+//pub_30263679f0f57b115e1e23fe1539f3b49f549
+    //pub_3026477623658c6746f585664fd6aae1c3e59
     mainViewModel.getNews(
-        apiKey = "pub_238458c1ba1e35414e6402b4c551dc42d5af7",
+        apiKey = "pub_30263679f0f57b115e1e23fe1539f3b49f549",
         query = "developer",
         country = "us",
         category = categoryN
@@ -148,7 +149,9 @@ fun HomeScreen(navController: NavHostController) {
             contentAlignment = Alignment.TopCenter
         ) {
             Column {
-                CircularProgressIndicator()
+                repeat(10) {
+                    ShimmerEffect()
+                }
             }
         }
     } else {
@@ -159,37 +162,20 @@ fun HomeScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
-                    modifier = Modifier.fillMaxWidth(0.76f),
-                    label = {
-                        Text(text = "Search News")
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Sharp.Search, contentDescription = "search",
-                                tint = Color.Black
-                            )
-                        }
-                    },
-                    textStyle = TextStyle.Default,
-                    placeholder = {
-                        Text(text = "Dogecoin to the Moon...")
-                    },
-                    shape = TextFieldDefaults.outlinedShape,
-                    interactionSource = MutableInteractionSource(),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words,
-                        autoCorrect = true,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Search
-                    ),
-                    keyboardActions = KeyboardActions(onSearch = {
 
-                    })
-                )
+                SearchBar(
+                    query = searchText,
+                    onQueryChange = { searchText = it },
+                    onSearch = { isActive = false },
+                    active = isActive,
+                    onActiveChange = {
+                        isActive = it
+                    },
+                    placeholder = { Text("Search News...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
+                    interactionSource = MutableInteractionSource()
+                ) {}
                 Card(
                     modifier = Modifier
                         .width(40.dp)
@@ -198,7 +184,7 @@ fun HomeScreen(navController: NavHostController) {
                         .background(color = Color(0XFFFF3A44))
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { navController.navigate(BottomNavScreen.HotNews.route) },
                         modifier = Modifier
                             .clip(shape = CircleShape)
                             .background(color = Color(0XFFFF3A44))
@@ -216,12 +202,15 @@ fun HomeScreen(navController: NavHostController) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = it.calculateTopPadding()),
+                        .padding(
+                            top = it.calculateTopPadding(),
+                            bottom = it.calculateBottomPadding()
+                        ),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TopNews()
-                    Spacer(modifier = Modifier.height(15.dp))
+                    TopNews(navController)
+                    Spacer(modifier = Modifier.height(10.dp))
                     LazyRow {
                         item {
                             categories.forEach { category ->
@@ -231,7 +220,7 @@ fun HomeScreen(navController: NavHostController) {
                                             isCategoryLoading = true
                                             scope.launch(Dispatchers.IO) {
                                                 mainViewModel.getNews(
-                                                    "pub_238458c1ba1e35414e6402b4c551dc42d5af7",
+                                                    "pub_30263679f0f57b115e1e23fe1539f3b49f549",
                                                     query = "developer",
                                                     country = "us",
                                                     category = category
@@ -260,50 +249,69 @@ fun HomeScreen(navController: NavHostController) {
                             }
                         }
                     }
-                    data?.results?.let { ArticleList(articles = it, isCategoryLoading) }
+                    data?.results?.let {
+                        ArticleList(
+                            articles = it,
+                            isCategoryLoading,
+                            navController
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             })
     }
 }
 
 @Composable
-fun ArticleList(articles: List<Result>, isLoading: Boolean) {
+fun ArticleList(articles: List<Result>, isLoading: Boolean, navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         items(articles) { article ->
-            ArticleCard(article, isLoading)
-            Spacer(modifier = Modifier.height(16.dp))
+            ArticleCard(article, isLoading, navController)
         }
     }
 }
 
 
 @Composable
-fun ArticleCard(article: Result, isLoading: Boolean) {
-    val scope = rememberCoroutineScope()
+fun ArticleCard(article: Result, isLoading: Boolean, navController: NavHostController) {
     val context = LocalContext.current
+
+
     var visibility by remember {
         mutableStateOf(false)
     }
     if (isLoading) {
         Box(contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            CategoryShimmerEffect()
         }
     } else {
         Card(
             modifier = Modifier
-                .width(345.dp)
+                .width(365.dp)
                 .height(128.dp)
-                .padding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
+                .padding(start = 8.dp, top = 8.dp, end = 8.dp)
                 .clickable {
-                    visibility = true
+                    navController.navigate(
+                        BottomNavScreen.Detail.passData(
+                            title = article.title,
+                            content = article.content,
+                            pubDate = article.pubDate,
+                            creator = article.creator,
+                            imageUrl =Uri.encode(article.image_url),
+                        )
+                    )
+
+                    // visibility = true
                 }
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
@@ -346,7 +354,7 @@ fun ArticleCard(article: Result, isLoading: Boolean) {
                         style = TextStyle(
                             fontSize = 12.sp,
                             lineHeight = 20.8.sp,
-                            fontFamily = FontFamily(Font(R.font.nunitto)),
+                            fontFamily = FontFamily(Font(R.font.nunito)),
                             fontWeight = FontWeight(600),
                             color = Color(0xFFFFFFFF),
                         )
@@ -357,7 +365,7 @@ fun ArticleCard(article: Result, isLoading: Boolean) {
                         style = TextStyle(
                             fontSize = 12.sp,
                             lineHeight = 20.8.sp,
-                            fontFamily = FontFamily(Font(R.font.nunitto)),
+                            fontFamily = FontFamily(Font(R.font.nunito)),
                             fontWeight = FontWeight(600),
                             color = Color(0xFFFFFFFF),
                             textAlign = TextAlign.Right,
