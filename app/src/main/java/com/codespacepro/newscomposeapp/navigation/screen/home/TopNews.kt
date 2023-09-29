@@ -1,6 +1,8 @@
 package com.codespacepro.newscomposeapp.navigation.screen.home
 
+import android.content.ContentValues.TAG
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -49,7 +52,10 @@ import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
 import com.codespacepro.newscomposeapp.navigation.graph.BottomNavScreen
 import com.codespacepro.newscomposeapp.repository.Repository
+import com.codespacepro.newscomposeapp.utli.Constant.Companion.API_KEY
+import com.codespacepro.newscomposeapp.utli.Constant.Companion.DEFAULT_IMAGE
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
+import java.net.SocketTimeoutException
 
 @Composable
 fun TopNews(navController: NavHostController) {
@@ -57,24 +63,33 @@ fun TopNews(navController: NavHostController) {
     val mainViewModel: MainViewModel = MainViewModel(Repository())
 
     val owner: LifecycleOwner = LocalLifecycleOwner.current
-
-
-    mainViewModel.getNews(
-        apiKey = "pub_30263679f0f57b115e1e23fe1539f3b49f549",
-        query = "developer",
-        country = "us",
-        category = "world"
-    )
-
     var data by remember {
         mutableStateOf<News?>(null)
     }
 
-    mainViewModel.myResponse.observe(owner, Observer { response ->
-        if (response?.isSuccessful == true) {
-            data = response.body()
-        }
-    })
+
+
+    try {
+        mainViewModel.getNews(
+            apiKey = API_KEY,
+            query = "developer",
+            country = "us",
+            category = "world"
+        )
+
+
+
+        mainViewModel.myResponse.observe(owner, Observer { response ->
+            if (response?.isSuccessful == true) {
+                data = response.body()
+            }
+        })
+        // Perform your network request here
+    } catch (e: SocketTimeoutException) {
+        // Log the timeout error for debugging
+        Log.e(TAG, "SocketTimeoutException: ${e.message}")
+    }
+
 
     Column {
         LatestNewsText()
@@ -107,10 +122,10 @@ fun TopNewsCard(result: Result, navController: NavHostController) {
                 navController.navigate(
                     BottomNavScreen.Detail.passData(
                         title = Uri.encode(result.title),
-                        content = Uri.encode(result?.content),
-                        pubDate = Uri.encode(result.pubDate),
-                        creator = listOf(result.creator.toString()),
-                        imageUrl = Uri.encode(result.image_url),
+                        content = Uri.encode(result.content),
+                        imageUrl = Uri.encode(result.image_url ?: DEFAULT_IMAGE),
+                        pubDate = result.pubDate,
+                        creator = result.creator
                     )
                 )
             },
@@ -119,12 +134,14 @@ fun TopNewsCard(result: Result, navController: NavHostController) {
         Box {
 
             AsyncImage(
-                model = result.image_url,
+                model = result.image_url ?: DEFAULT_IMAGE,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(),
                 contentScale = ContentScale.FillBounds,
-                placeholder = painterResource(id = R.drawable.world)
+                placeholder = painterResource(id = R.drawable.world),
+                filterQuality = FilterQuality.High,
+                fallback = painterResource(id = R.drawable.f)
             )
 
 

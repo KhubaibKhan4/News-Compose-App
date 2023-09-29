@@ -47,13 +47,13 @@ fun DetailScreen(
     navController: NavHostController,
     title: String?,
     content: String?,
+    imageUrl: String?,
     pubDate: String?,
     creator: String?,
-    imageUrl: String?,
 ) {
 
     DetailItem(
-        navController, title, content, pubDate, creator, imageUrl
+        navController, title, content, imageUrl, pubDate, creator
     )
 
 
@@ -64,9 +64,9 @@ fun DetailItem(
     navController: NavHostController,
     title: String?,
     content: String?,
+    imageUrl: String?,
     pubDate: String?,
     creator: String?,
-    imageUrl: String?,
 ) {
     val state = rememberScrollState()
     var onClick by remember {
@@ -182,7 +182,7 @@ fun DetailItem(
 
                     // Published by
                     Text(
-                        text = "Published by $creator",
+                        text = "Published by ${creator?.get(0)}",
                         style = TextStyle(
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,

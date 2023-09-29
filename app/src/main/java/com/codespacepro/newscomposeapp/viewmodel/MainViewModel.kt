@@ -15,6 +15,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val myResponse: MutableLiveData<Response<News>> = MutableLiveData()
+    val myCryptoResponse: MutableLiveData<Response<News>> = MutableLiveData()
 
 
     fun getNews(
@@ -31,6 +32,15 @@ class MainViewModel @Inject constructor(
                 category
             )
             myResponse.value = response
+        }
+    }
+
+    fun getCrypto(
+        apiKey: String
+    ) {
+        viewModelScope.launch {
+            val response = repository.getCrypto(apiKey)
+            myCryptoResponse.value = response
         }
     }
 }

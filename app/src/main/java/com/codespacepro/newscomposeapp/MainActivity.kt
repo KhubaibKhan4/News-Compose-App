@@ -8,25 +8,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.codespacepro.newscomposeapp.navigation.component.MainScreen
-import com.codespacepro.newscomposeapp.repository.Repository
 import com.codespacepro.newscomposeapp.ui.theme.NewsComposeAppTheme
-import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
-import com.codespacepro.newscomposeapp.viewmodel.MainViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var mainViewModel: MainViewModel
-
-    @Inject
-    lateinit var repository: Repository
-
-    @Inject
-    lateinit var mainViewModelFactory: MainViewModelFactory
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

@@ -1,6 +1,5 @@
-package com.codespacepro.newscomposeapp.navigation.screen.notification
+package com.codespacepro.newscomposeapp.navigation.screen.crypto
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.net.Uri
 import android.util.Log
@@ -47,7 +46,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
@@ -59,54 +57,38 @@ import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
 import com.codespacepro.newscomposeapp.navigation.graph.BottomNavScreen
 import com.codespacepro.newscomposeapp.repository.Repository
+import com.codespacepro.newscomposeapp.utli.Constant
 import com.codespacepro.newscomposeapp.utli.Constant.Companion.API_KEY
-import com.codespacepro.newscomposeapp.utli.Constant.Companion.DEFAULT_IMAGE
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
 import java.net.SocketTimeoutException
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HotNews(navController: NavHostController) {
-
-    var categoryN by remember {
-        mutableStateOf("top")
-    }
-
+fun CryptoScreen(navController: NavHostController) {
     var isLoading by remember {
         mutableStateOf(true)
     }
-
-
     val mainViewModel: MainViewModel = MainViewModel(Repository())
 
     val owner: LifecycleOwner = LocalLifecycleOwner.current
-
-
     var data by remember {
         mutableStateOf<News?>(null)
     }
 
+
     try {
+        mainViewModel.getCrypto(apiKey = API_KEY)
 
-        mainViewModel.getNews(
-            apiKey = API_KEY,
-            query = "developer",
-            country = "us",
-            category = categoryN
-        )
-
-        mainViewModel.myResponse.observe(owner, Observer { response ->
+        mainViewModel.myCryptoResponse.observe(owner, Observer { response ->
             if (response?.isSuccessful == true) {
                 data = response.body()
-                Log.d("Main", "HomeScreen: ${response.body()}")
-                isLoading = false
-            } else {
+                Log.d("Crypto", "CryptoScreen: $data")
                 isLoading = false
             }
         })
+        // Perform your network request here
     } catch (e: SocketTimeoutException) {
-
+        isLoading = false
         // Log the timeout error for debugging
         Log.e(ContentValues.TAG, "SocketTimeoutException: ${e.message}")
     }
@@ -116,7 +98,7 @@ fun HotNews(navController: NavHostController) {
         TopAppBar(
             title = {
                 Text(
-                    text = "Hot Updates",
+                    text = "Crypto Updates",
                     style = TextStyle(
                         fontSize = 17.sp,
                         lineHeight = 22.sp,
@@ -146,7 +128,7 @@ fun HotNews(navController: NavHostController) {
                     CircularProgressIndicator()
                 }
             } else {
-                data?.let { it1 -> HotList(news = it1, navController) }
+                data?.let { it1 -> CryptoList(news = it1, navController) }
             }
 
         }
@@ -155,17 +137,17 @@ fun HotNews(navController: NavHostController) {
 }
 
 @Composable
-fun HotList(news: News, navController: NavHostController) {
+fun CryptoList(news: News, navController: NavHostController) {
     LazyColumn {
         items(news.results) {
-            HotUpdatesItem(result = it, navController)
+            CryptoUpdatesItem(result = it, navController)
         }
     }
 }
 
 
 @Composable
-fun HotUpdatesItem(result: Result, navController: NavHostController) {
+fun CryptoUpdatesItem(result: Result, navController: NavHostController) {
 
 
     Column(
@@ -177,7 +159,7 @@ fun HotUpdatesItem(result: Result, navController: NavHostController) {
     ) {
         Spacer(modifier = Modifier.height(8.dp))
         AsyncImage(
-            model = result.image_url ?: "$DEFAULT_IMAGE",
+            model = result.image_url ?: "${Constant.DEFAULT_IMAGE}",
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
@@ -227,7 +209,7 @@ fun HotUpdatesItem(result: Result, navController: NavHostController) {
                             BottomNavScreen.Detail.passData(
                                 title = result.title,
                                 content = Uri.encode(result.content),
-                                imageUrl = Uri.encode(result.image_url ?: DEFAULT_IMAGE),
+                                imageUrl = Uri.encode(result.image_url ?: Constant.DEFAULT_IMAGE),
                                 pubDate = result.pubDate,
                                 creator = result.creator
                             )
@@ -278,8 +260,3 @@ fun HotUpdatesItem(result: Result, navController: NavHostController) {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    // HotUpdatesItem()
-}

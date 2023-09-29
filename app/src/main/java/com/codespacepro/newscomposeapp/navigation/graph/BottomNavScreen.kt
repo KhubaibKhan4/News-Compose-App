@@ -1,10 +1,11 @@
 package com.codespacepro.newscomposeapp.navigation.graph
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.sharp.FavoriteBorder
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomNavScreen(
@@ -18,36 +19,42 @@ sealed class BottomNavScreen(
         icon = Icons.Default.Home
     )
 
-    object Search : BottomNavScreen(
-        route = "search",
-        title = "Search",
-        icon = Icons.Default.Search
+    object Crypto : BottomNavScreen(
+        route = "crypto",
+        title = "Crypto",
+        icon = Icons.Default.Warning
     )
 
-    object Profile : BottomNavScreen(
-        route = "profile",
-        title = "Profile",
-        icon = Icons.Default.Person
+    object Archive : BottomNavScreen(
+        route = "archive",
+        title = "Archive",
+        icon = Icons.Default.Email
     )
-    object TopNews: BottomNavScreen(
+    object Favourite : BottomNavScreen(
+        route = "favourite",
+        title = "Favourite",
+        icon = Icons.Sharp.FavoriteBorder
+    )
+
+    object TopNews : BottomNavScreen(
         route = "top",
         title = "Top News",
         icon = Icons.Default.MoreVert
     )
 
     object Detail : BottomNavScreen(
-        route = "detail/{title}/{content}/{pubDate}/{creator}/{imageUrl}",
+        route = "detail/{title}/{content}/{imageUrl}/{pubDate}/{creator}",
         title = "Details",
         icon = Icons.Default.MoreVert
     ) {
         fun passData(
             title: String?,
             content: String?,
-            pubDate: String?,
-            creator: List<String>?,
             imageUrl: String?,
+            pubDate: String?,
+            creator: List<String>?
         ): String {
-            return "detail/$title/$content/$pubDate/$creator/$imageUrl"
+            return "detail/$title/$content/$imageUrl/$pubDate/$creator"
         }
     }
 

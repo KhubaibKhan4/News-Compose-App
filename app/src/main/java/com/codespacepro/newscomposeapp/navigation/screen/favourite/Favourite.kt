@@ -1,4 +1,4 @@
-package com.codespacepro.newscomposeapp.navigation.screen.profile
+package com.codespacepro.newscomposeapp.navigation.screen.favourite
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,13 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
-
+fun FavouriteScreen(navController: NavHostController) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Profile")
+        Text(text = "Favourite")
     }
-
 }

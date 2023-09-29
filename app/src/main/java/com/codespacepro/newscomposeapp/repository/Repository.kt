@@ -18,4 +18,10 @@ class Repository @Inject constructor() {
         return RetrofitInstance.api.getNews(apiKey, query, country, category)
     }
 
+    suspend fun getCrypto(
+        apiKey: String
+    ): Response<News> {
+        return RetrofitInstance.api.getCrypto(apiKey)
+    }
+
 }

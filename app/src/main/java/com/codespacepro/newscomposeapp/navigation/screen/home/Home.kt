@@ -1,5 +1,6 @@
 package com.codespacepro.newscomposeapp.navigation.screen.home
 
+import android.content.ContentValues
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -66,16 +68,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.codespacepro.newscomposeapp.R
 import com.codespacepro.newscomposeapp.model.News
 import com.codespacepro.newscomposeapp.model.Result
 import com.codespacepro.newscomposeapp.navigation.graph.BottomNavScreen
 import com.codespacepro.newscomposeapp.repository.Repository
+import com.codespacepro.newscomposeapp.utli.Constant.Companion.API_KEY
+import com.codespacepro.newscomposeapp.utli.Constant.Companion.DEFAULT_IMAGE
 import com.codespacepro.newscomposeapp.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import java.util.Locale
 
 
@@ -104,28 +108,32 @@ fun HomeScreen(navController: NavHostController) {
 
     val owner: LifecycleOwner = LocalLifecycleOwner.current
 
-//pub_30263679f0f57b115e1e23fe1539f3b49f549
-    //pub_3026477623658c6746f585664fd6aae1c3e59
-    mainViewModel.getNews(
-        apiKey = "pub_30263679f0f57b115e1e23fe1539f3b49f549",
-        query = "developer",
-        country = "us",
-        category = categoryN
-    )
 
     var data by remember {
         mutableStateOf<News?>(null)
     }
 
-    mainViewModel.myResponse.observe(owner, Observer { response ->
-        if (response?.isSuccessful == true) {
-            data = response.body()
-            Log.d("Main", "HomeScreen: ${response.body()}")
-            isLoading = false
-        } else {
-            isLoading = false
-        }
-    })
+    try {
+
+        mainViewModel.getNews(
+            apiKey = API_KEY,
+            query = "developer",
+            country = "us",
+            category = categoryN
+        )
+
+        mainViewModel.myResponse.observe(owner, Observer { response ->
+            if (response?.isSuccessful == true) {
+                data = response.body()
+                Log.d("Main", "HomeScreen: ${response.body()}")
+                isLoading = false
+            } else {
+                isLoading = false
+            }
+        })
+    } catch (e: SocketTimeoutException) {
+        Log.e(ContentValues.TAG, "SocketTimeoutException: ${e.message}")
+    }
 
 
     val categories = listOf(
@@ -220,7 +228,7 @@ fun HomeScreen(navController: NavHostController) {
                                             isCategoryLoading = true
                                             scope.launch(Dispatchers.IO) {
                                                 mainViewModel.getNews(
-                                                    "pub_30263679f0f57b115e1e23fe1539f3b49f549",
+                                                    API_KEY,
                                                     query = "developer",
                                                     country = "us",
                                                     category = category
@@ -256,7 +264,6 @@ fun HomeScreen(navController: NavHostController) {
                             navController
                         )
                     }
-                    Spacer(modifier = Modifier.height(30.dp))
                 }
             })
     }
@@ -266,7 +273,8 @@ fun HomeScreen(navController: NavHostController) {
 fun ArticleList(articles: List<Result>, isLoading: Boolean, navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(bottom = 85.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -297,15 +305,21 @@ fun ArticleCard(article: Result, isLoading: Boolean, navController: NavHostContr
                 .height(128.dp)
                 .padding(start = 8.dp, top = 8.dp, end = 8.dp)
                 .clickable {
-                    navController.navigate(
-                        BottomNavScreen.Detail.passData(
-                            title = article.title,
-                            content = article.content,
-                            pubDate = article.pubDate,
-                            creator = article.creator,
-                            imageUrl =Uri.encode(article.image_url),
+
+                    try {
+                        navController.navigate(
+                            BottomNavScreen.Detail.passData(
+                                title = article.title,
+                                content = Uri.encode(article.content),
+                                imageUrl = Uri.encode(article.image_url ?: DEFAULT_IMAGE),
+                                pubDate = article.pubDate,
+                                creator = article.creator
+                            )
                         )
-                    )
+                    } catch (e: Exception) {
+                        Log.e(ContentValues.TAG, "SocketTimeoutException: ${e.message}")
+                    }
+
 
                     // visibility = true
                 }
@@ -314,17 +328,15 @@ fun ArticleCard(article: Result, isLoading: Boolean, navController: NavHostContr
                 modifier = Modifier.fillMaxWidth()
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(article.image_url)
-                        .crossfade(enable = true)
-                        .placeholder(R.drawable.world)
-                        .build(),
+                    model = article.image_url ?: DEFAULT_IMAGE,
                     placeholder = painterResource(id = R.drawable.world),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillBounds,
+                    filterQuality = FilterQuality.High,
+                    fallback = painterResource(id = R.drawable.f)
                 )
                 Text(
                     modifier = Modifier

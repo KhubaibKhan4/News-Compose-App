@@ -13,4 +13,9 @@ interface NewsApi {
         @Query("country") country: String,
         @Query("category") category: String
     ): Response<News>
+
+    @GET("api/1/crypto")
+    suspend fun getCrypto(
+        @Query("apikey") apiKey: String,
+    ): Response<News>
 }
