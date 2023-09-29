@@ -1,6 +1,6 @@
 # News-Compose-App
 
-<img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230926_234119.png" width="50%" height="50%" />
+<img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230009.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230037.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230054.png" width="50%" height="50%" />
 
 
 🏗️ Welcome to the News App project! I've embarked on a journey to create a News App that's not just informative but also a joy to use. Here's a glimpse of what's under the hood:
@@ -28,6 +28,9 @@ But that's what makes it so thrilling, right? 🌟
 I promise to keep you all in the loop as I make progress and overcome obstacles. Your feedback, suggestions, and support mean the world to me, so please feel free to chime in and share your thoughts!
 
 🔥 If you're as excited as I am about this project, stay tuned for updates and maybe a sneak peek video or two! 🎥
+
+##    Note Related to Crypto & Archive News Section.
+<p>Crypto News & Archive News is Already Setuped. Kindly Purchase Subscription to view them.</p>
 
 Contributing
 Let's make this News App project something truly special together! 🚀💼
