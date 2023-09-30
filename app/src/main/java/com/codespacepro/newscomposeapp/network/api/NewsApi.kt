@@ -18,4 +18,11 @@ interface NewsApi {
     suspend fun getCrypto(
         @Query("apikey") apiKey: String,
     ): Response<News>
+
+
+    @GET("api/1/archive")
+    suspend fun getArchive(
+        @Query("apikey") apiKey: String,
+        @Query("country") country: String,
+    ): Response<News>
 }
