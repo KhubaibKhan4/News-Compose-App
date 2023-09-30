@@ -65,6 +65,9 @@ import java.net.SocketTimeoutException
 @Composable
 fun ArchiveScreen(navController: NavHostController) {
 
+    //TO  Fetch Archive  News, You need to purchase Subscription  from
+    //NewsData.io
+
     var isLoading by remember {
         mutableStateOf(true)
     }

@@ -65,6 +65,10 @@ import java.net.SocketTimeoutException
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CryptoScreen(navController: NavHostController) {
+
+    //TO  Fetch Crypto  News, You need to purchase Subscription  from
+    //NewsData.io
+
     var isLoading by remember {
         mutableStateOf(true)
     }
