@@ -1,6 +1,7 @@
 # News-Compose-App
 
-<img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230009.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230037.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230054.png" width="50%" height="50%" />
+<img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230009.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230037.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230929_230054.png" width="50%" height="50%" /><img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/Screenshot_20230930_160705.png" width="50%" height="50%" />
+<img src="https://github.com/KhubaibKhan4/News-Compose-App/blob/master/screenshots/banner.jpg"  />
 
 
 🏗️ Welcome to the News App project! I've embarked on a journey to create a News App that's not just informative but also a joy to use. Here's a glimpse of what's under the hood:
@@ -34,5 +35,3 @@ I promise to keep you all in the loop as I make progress and overcome obstacles.
 
 Contributing
 Let's make this News App project something truly special together! 🚀💼
-
-(Work is still in progress)
